@@ -69,7 +69,7 @@ proto._init = function() {
     .attr('width', width)
     .attr('height', height)
     .append('g')
-    .attr('transform', 'translate(' + margin.left + ',' + margin.top')')
+    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
 
   this.x = d3.scale.linear()
     .domain([0, 23])
@@ -122,7 +122,7 @@ proto.render = function(data) {
 proto._renderAxis = function() {
   this.chart.append('g')
     .attr('class', 'x axis')
-    .attr('transform', 'translate(0, ' + this.innerHeight+ ')')
+    .attr('transform', 'translate(0, ' + this.innerHeight + ')')
     .call(this.xAxis)
 
   this.chart.append('g')
