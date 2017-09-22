@@ -1,11 +1,9 @@
-'use strict';
-
-var d3 = require('d3');
+const d3 = require('d3');
 
 /**
  * Default options.
  */
-var defaults = {
+const defaults = {
   target: '#chart',
   width: 600,
   height: 400,
@@ -48,8 +46,6 @@ var proto = Punchcard.prototype;
  * @private
  */
 proto._init = function () {
-  var _this = this;
-
   var width = this.width;
   var height = this.height;
   var margin = this.margin;
@@ -67,13 +63,9 @@ proto._init = function () {
 
   this.y = d3.scale.linear().domain([0, 6]).range([unitHeight / 2, innerHeight - unitHeight / 2]);
 
-  this.xAxis = d3.svg.axis().orient('bottom').scale(this.x).ticks(24).tickFormat(function (d, i) {
-    return _this.xticks[i];
-  });
+  this.xAxis = d3.svg.axis().orient('bottom').scale(this.x).ticks(24).tickFormat((d, i) => this.xticks[i]);
 
-  this.yAxis = d3.svg.axis().orient('left').scale(this.y).ticks(7).tickFormat(function (d, i) {
-    return _this.yticks[i];
-  });
+  this.yAxis = d3.svg.axis().orient('left').scale(this.y).ticks(7).tickFormat((d, i) => this.yticks[i]);
 
   this._renderAxis();
 };
@@ -85,7 +77,7 @@ proto._init = function () {
  * @public
  */
 proto.render = function (data) {
-  data = (data || []).filter(function (d) {
+  data = (data || []).filter(d => {
     return Array.isArray(d) && d.length === 3 && d[0] >= 0 && d[0] <= 6 && d[1] >= 0 && d[1] <= 23;
   });
 
@@ -110,26 +102,16 @@ proto._renderAxis = function () {
  * @private
  */
 proto._renderCard = function () {
-  var _this2 = this;
-
   var data = this.data;
-  var maxVal = d3.max(data, function (d) {
-    return d[2];
-  });
+  var maxVal = d3.max(data, d => d[2]);
 
   this.r = d3.scale.sqrt().domain([0, maxVal]).range([0, this.unitSize / 2]);
 
   var circles = this.chart.selectAll('circle').data(data);
 
   var updates = [circles, circles.enter().append('circle')];
-  updates.forEach(function (group) {
-    group.attr('cx', function (d) {
-      return _this2.x(d[1]);
-    }).attr('cy', function (d) {
-      return _this2.y(d[0]);
-    }).attr('r', function (d) {
-      return _this2.r(d[2]);
-    }).style('fill', _this2.color);
+  updates.forEach(group => {
+    group.attr('cx', d => this.x(d[1])).attr('cy', d => this.y(d[0])).attr('r', d => this.r(d[2])).style('fill', this.color);
   });
 
   circles.exit().remove();
