@@ -1,9 +1,11 @@
-const d3 = require('d3')
+'use strict';
+
+var d3 = require('d3');
 
 /**
  * Default options.
  */
-const defaults = {
+var defaults = {
   target: '#chart',
   width: 600,
   height: 400,
@@ -14,18 +16,11 @@ const defaults = {
     left: 100
   },
   color: '#444',
-  xticks: [
-    '12a', '1a', '2a', '3a', '4a', '5a', '6a', '7a',
-    '8a', '9a', '10a', '11a', '12p', '1p', '2p', '3p',
-    '4p', '5p', '6p', '7p', '8p', '9p', '10p', '11p'
-  ],
-  yticks: [
-    'Sunday', 'Monday', 'Tuesday', 'Wednesday',
-    'Thursday', 'Friday', 'Saturday'
-  ]
-}
+  xticks: ['12a', '1a', '2a', '3a', '4a', '5a', '6a', '7a', '8a', '9a', '10a', '11a', '12p', '1p', '2p', '3p', '4p', '5p', '6p', '7p', '8p', '9p', '10p', '11p'],
+  yticks: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+};
 
-module.exports = Punchcard
+module.exports = Punchcard;
 
 /**
  * Punchcard chart.
@@ -35,64 +30,53 @@ module.exports = Punchcard
  */
 function Punchcard(options) {
   if (!(this instanceof Punchcard)) {
-    return new Punchcard(options)
+    return new Punchcard(options);
   }
 
-  Object.assign(this, defaults, options)
-  this._init()
+  Object.assign(this, defaults, options);
+  this._init();
 }
 
 /**
  * Punchcard prototype.
  */
-var proto = Punchcard.prototype
+var proto = Punchcard.prototype;
 
 /**
  * Initialize the chart.
  *
  * @private
  */
-proto._init = function() {
-  var width = this.width
-  var height = this.height
-  var margin = this.margin
+proto._init = function () {
+  var _this = this;
 
-  var innerWidth = this.innerWidth = width - margin.left - margin.right
-  var innerHeight = this.innerHeight = height - margin.top - margin.bottom
-  var unitWidth = this.unitWidth = innerWidth / 24
-  var unitHeight = this.unitHeight = innerHeight / 7
+  var width = this.width;
+  var height = this.height;
+  var margin = this.margin;
 
-  this.unitSize = Math.min(unitWidth, unitHeight)
+  var innerWidth = this.innerWidth = width - margin.left - margin.right;
+  var innerHeight = this.innerHeight = height - margin.top - margin.bottom;
+  var unitWidth = this.unitWidth = innerWidth / 24;
+  var unitHeight = this.unitHeight = innerHeight / 7;
 
-  this.chart = d3.select(this.target)
-    .append('svg')
-    .attr('width', width)
-    .attr('height', height)
-    .append('g')
-    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+  this.unitSize = Math.min(unitWidth, unitHeight);
 
-  this.x = d3.scale.linear()
-    .domain([0, 23])
-    .range([unitWidth / 2, innerWidth - unitWidth / 2])
+  this.chart = d3.select(this.target).append('svg').attr('width', width).attr('height', height).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-  this.y = d3.scale.linear()
-    .domain([0, 6])
-    .range([unitHeight / 2, innerHeight - unitHeight / 2])
+  this.x = d3.scale.linear().domain([0, 23]).range([unitWidth / 2, innerWidth - unitWidth / 2]);
 
-  this.xAxis = d3.svg.axis()
-    .orient('bottom')
-    .scale(this.x)
-    .ticks(24)
-    .tickFormat((d, i) => this.xticks[i])
+  this.y = d3.scale.linear().domain([0, 6]).range([unitHeight / 2, innerHeight - unitHeight / 2]);
 
-  this.yAxis = d3.svg.axis()
-    .orient('left')
-    .scale(this.y)
-    .ticks(7)
-    .tickFormat((d, i) => this.yticks[i])
+  this.xAxis = d3.svg.axis().orient('bottom').scale(this.x).ticks(24).tickFormat(function (d, i) {
+    return _this.xticks[i];
+  });
 
-  this._renderAxis()
-}
+  this.yAxis = d3.svg.axis().orient('left').scale(this.y).ticks(7).tickFormat(function (d, i) {
+    return _this.yticks[i];
+  });
+
+  this._renderAxis();
+};
 
 /**
  * Render punchcard.
@@ -100,68 +84,62 @@ proto._init = function() {
  * @param  {Array} data
  * @public
  */
-proto.render = function(data) {
-  data = (data || []).filter(d => {
-    return Array.isArray(d) &&
-      d.length === 3 &&
-      d[0] >= 0 &&
-      d[0] <= 6 &&
-      d[1] >= 0 &&
-      d[1] <= 23
-  })
+proto.render = function (data) {
+  data = (data || []).filter(function (d) {
+    return Array.isArray(d) && d.length === 3 && d[0] >= 0 && d[0] <= 6 && d[1] >= 0 && d[1] <= 23;
+  });
 
-  this.data = data
-  this._renderCard()
-}
+  this.data = data;
+  this._renderCard();
+};
 
 /**
  * Render axis.
  *
  * @private
  */
-proto._renderAxis = function() {
-  this.chart.append('g')
-    .attr('class', 'x axis')
-    .attr('transform', 'translate(0, ' + this.innerHeight + ')')
-    .call(this.xAxis)
+proto._renderAxis = function () {
+  this.chart.append('g').attr('class', 'x axis').attr('transform', 'translate(0, ' + this.innerHeight + ')').call(this.xAxis);
 
-  this.chart.append('g')
-    .attr('class', 'y axis')
-    .call(this.yAxis)
-}
+  this.chart.append('g').attr('class', 'y axis').call(this.yAxis);
+};
 
 /**
  * Render card.
  *
  * @private
  */
-proto._renderCard = function() {
-  var data = this.data
-  var maxVal = d3.max(data, d => d[2])
+proto._renderCard = function () {
+  var _this2 = this;
 
-  this.r = d3.scale.sqrt()
-    .domain([0, maxVal])
-    .range([0, this.unitSize / 2])
+  var data = this.data;
+  var maxVal = d3.max(data, function (d) {
+    return d[2];
+  });
 
-  var circles = this.chart.selectAll('circle').data(data)
+  this.r = d3.scale.sqrt().domain([0, maxVal]).range([0, this.unitSize / 2]);
 
-  var updates = [circles, circles.enter().append('circle')]
-  updates.forEach(group => {
-    group
-      .attr('cx', d => this.x(d[1]))
-      .attr('cy', d => this.y(d[0]))
-      .attr('r', d => this.r(d[2]))
-      .style('fill', this.color)
-  })
+  var circles = this.chart.selectAll('circle').data(data);
 
-  circles.exit().remove()
-}
+  var updates = [circles, circles.enter().append('circle')];
+  updates.forEach(function (group) {
+    group.attr('cx', function (d) {
+      return _this2.x(d[1]);
+    }).attr('cy', function (d) {
+      return _this2.y(d[0]);
+    }).attr('r', function (d) {
+      return _this2.r(d[2]);
+    }).style('fill', _this2.color);
+  });
+
+  circles.exit().remove();
+};
 
 /**
  * Clear chart.
  *
  * @public
  */
-proto.clear = function() {
-  this.chart.selectAll('*').remove()
-}
+proto.clear = function () {
+  this.chart.selectAll('*').remove();
+};
