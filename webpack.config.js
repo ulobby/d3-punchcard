@@ -15,14 +15,16 @@ module.exports = {
     d3: 'd3'
   },
   module: {
-    loaders: [{
-      test: /\.js$/,
-      loader: 'babel-loader',
-      exclude: /node_modules/,
-      query: {
-        presets: ['es2015']
+    loaders: [
+      {
+        test: /\.ss6$/,
+        exclude: /node_modules/,
+        loader: 'babel',
+        query: {
+          presets: ['es2015']
+        }
       }
-    }]
+    ]
   },
   plugins: [
   ],
