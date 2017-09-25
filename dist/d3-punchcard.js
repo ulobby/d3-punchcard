@@ -52,16 +52,14 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-	'use strict';
-
-	var d3 = __webpack_require__(1);
+	const d3 = __webpack_require__(1);
 
 	/**
 	 * Default options.
 	 */
-	var defaults = {
+	const defaults = {
 	  target: '#chart',
 	  width: 600,
 	  height: 400,
@@ -75,9 +73,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  xticks: ['12a', '1a', '2a', '3a', '4a', '5a', '6a', '7a', '8a', '9a', '10a', '11a', '12p', '1p', '2p', '3p', '4p', '5p', '6p', '7p', '8p', '9p', '10p', '11p'],
 	  yticks: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 	};
-
-	// exports = module.exports = Punchcard
-	// exports.punchcard = Punchcard
 
 	module.exports = Punchcard;
 
@@ -107,8 +102,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @private
 	 */
 	proto._init = function () {
-	  var _this = this;
-
 	  var width = this.width;
 	  var height = this.height;
 	  var margin = this.margin;
@@ -120,19 +113,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  this.unitSize = Math.min(unitWidth, unitHeight);
 
-	  this.chart = d3.select(this.target).append('svg').attr('width', width).attr('height', height).append('g').attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+	  this.chart = d3.select(this.target).append('svg').attr('width', width).attr('height', height).append('g').attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
 	  this.x = d3.scale.linear().domain([0, 23]).range([unitWidth / 2, innerWidth - unitWidth / 2]);
 
 	  this.y = d3.scale.linear().domain([0, 6]).range([unitHeight / 2, innerHeight - unitHeight / 2]);
 
-	  this.xAxis = d3.svg.axis().orient('bottom').scale(this.x).ticks(24).tickFormat(function (d, i) {
-	    return _this.xticks[i];
-	  });
+	  this.xAxis = d3.svg.axis().orient('bottom').scale(this.x).ticks(24).tickFormat(function(d, i) { return this.xticks[i];});
 
-	  this.yAxis = d3.svg.axis().orient('left').scale(this.y).ticks(7).tickFormat(function (d, i) {
-	    return _this.yticks[i];
-	  });
+	  this.yAxis = d3.svg.axis().orient('left').scale(this.y).ticks(7).tickFormat(function(d, i) { return this.yticks[i];});
 
 	  this._renderAxis();
 	};
@@ -144,7 +133,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @public
 	 */
 	proto.render = function (data) {
-	  data = (data || []).filter(function (d) {
+	  data = (data || []).filter(function(d) {
 	    return Array.isArray(d) && d.length === 3 && d[0] >= 0 && d[0] <= 6 && d[1] >= 0 && d[1] <= 23;
 	  });
 
@@ -169,26 +158,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @private
 	 */
 	proto._renderCard = function () {
-	  var _this2 = this;
-
 	  var data = this.data;
-	  var maxVal = d3.max(data, function (d) {
-	    return d[2];
-	  });
+	  var maxVal = d3.max(data, function(d) {return d[2];});
 
 	  this.r = d3.scale.sqrt().domain([0, maxVal]).range([0, this.unitSize / 2]);
 
 	  var circles = this.chart.selectAll('circle').data(data);
 
 	  var updates = [circles, circles.enter().append('circle')];
-	  updates.forEach(function (group) {
-	    group.attr('cx', function (d) {
-	      return _this2.x(d[1]);
-	    }).attr('cy', function (d) {
-	      return _this2.y(d[0]);
-	    }).attr('r', function (d) {
-	      return _this2.r(d[2]);
-	    }).style('fill', _this2.color);
+	  updates.forEach(function(group) {
+	    group.attr('cx', function() { return this.x(d[1]) })
+	    .attr('cy', function(d) { return this.y(d[0])})
+	    .attr('r', function(d) { return this.r(d[2])}).style('fill', this.color);
 	  });
 
 	  circles.exit().remove();
@@ -203,13 +184,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	  this.chart.selectAll('*').remove();
 	};
 
-/***/ },
+
+/***/ }),
 /* 1 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
 
-/***/ }
+/***/ })
 /******/ ])
 });
 ;
